@@ -1,0 +1,23 @@
+{
+    "name": "MonitorSignosVitales",
+    "version": "1.0.0",
+    "keywords": [
+        "util",
+        "functional",
+        "server",
+        "client",
+        "browser"
+    ],
+    "author": "felipe de jesus <itifjpp@gmail.com>",
+    "contributors": [],
+    "dependencies": {
+        "chokidar": "^2.0.3",
+        "express": "^4.16.3",
+        "fs": "0.0.1-security",
+        "fs-extra": "^6.0.1",
+        "location-href": "^1.0.0",
+        "open": "0.0.5",
+        "path": "^0.12.7",
+        "pm2": "^2.10.3"
+    }
+}
