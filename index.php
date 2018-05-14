@@ -8,9 +8,15 @@
     <body>
         <div>Iniciando Lectura de Archivos XML..</div>
     </body>
+    <?php
+        define('base_domain', $_SERVER['HTTP_HOST']);
+    ?>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script src="https://<?=base_domain?>:5001/socket.io/socket.io.js" sighuser="9999" type="text/javascript"></script>
     <script>
         var xml_file ='<?php echo $_GET['xml'];?>';
+        var socket=io.connect('https://<?=base_domain?>:5001/');
+        
         /* 
             Created on : 22/11/2017, 02:05:50 PM
             Author     : felipe de jesus <itifjpp@gmail.com>
@@ -87,19 +93,29 @@
                     medico_ap:apellidos[1],
                     paciente_id:paciente_id
                 };
+                socket.emit('MonitorSignosVitalesReading', InformacionSignosVitales); 
                 $.ajax({
                     url: "https://192.168.0.108/sigh/Sections/SignosVitales/AjaxInformationPatient",
                     type: 'POST',
                     dataType: 'json',
                     data:InformacionSignosVitales,
                     success: function (data, textStatus, jqXHR) {
-                        
-                        <?php //unlink("xml/".$_GET['xml']); ?>
+                        $.ajax({
+                            url: "Actions.php",
+                            type: 'POST',
+                            dataType: 'json',
+                            data:{xml:xml_file},
+                            success: function (data, textStatus, jqXHR) {
+                                window.top.close();
+                            },error: function (error) {
+                                console.log(error);
+                            }
+                        });
                     },error: function (error) {
                         console.log(error);
                     }
-                })
+                });
             });
-        })
+        });
     </script>
 </html>

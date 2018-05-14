@@ -1,8 +1,15 @@
 /* Monitor se Singnos Vitales */
 var express=require('express');
 var app=express();
-var http = require('http').createServer(app);
+
 var fs = require('fs')  ;
+var privateKey  = fs.readFileSync('sslcert/sigh.key', 'utf8');
+var certificate = fs.readFileSync('sslcert/sigh.crt', 'utf8');
+var credentials = {
+    key: privateKey, 
+    cert: certificate
+};
+var https = require('https').createServer(credentials,app);
 var location = require('location-href');
 var path    = require("path");
 var chokidar = require('chokidar');
@@ -12,8 +19,22 @@ var watcher = chokidar.watch('C://Program Files (x86)//Welch Allyn//NCE//SavedCo
     ignored: /^\./, 
     persistent: true
 });
-
+var socket=require('socket.io');
+var io=socket.listen(https);
 path.dirname('xml');
+app.use(function(req, res, next) {
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    // Pass to next layer of middleware
+    next();
+});
 watcher.on('add', function(directory) { 
     if(path.extname(directory)=='.xml'){
         try {
@@ -48,10 +69,15 @@ watcher.on('add', function(directory) {
 }).on('error', function(error) {
     console.error('A ocurrido un error. Error desconocido..', error);
 });
-
-http.listen(5001,function () {
+io.sockets.on('connect',function(client){  
+    client.on('MonitorSignosVitalesListening',function(data){
+       io.sockets.emit('MonitorSignosVitalesListening',data); 
+    });
+});
+https.listen(5001,function () {
     console.log('EL SERVIDOR HTTP ESTA LISTO Y ESCUCHANDO EN EL PUERTO 5001 :)');
 });
+
 
 
 
