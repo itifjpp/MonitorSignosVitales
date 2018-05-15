@@ -53,6 +53,10 @@
                             let sv_oxi=sv_oximetria.slice(0,sv_oximetria.length-2);
                             sv_oximetria=sv_oxi;
                         }
+                    }if($(this).attr('name')=='Respiration'){
+                        if($(this).find('VALUE').text()!=''){
+                            sv_fr=$(this).find('VALUE').text();
+                        }
                     }if($(this).attr('name')=='Temperature'){
                         if($(this).find('VALUE DEFINITION MEMBERS MEMBER VALUE:first').text()!=''){
                             sv_temp=$(this).find('VALUE DEFINITION MEMBERS MEMBER VALUE:first').text().replace(/\s/g,"");
@@ -78,7 +82,7 @@
                                 sv_glicemia=$(this).attr('Value');
                             }
                             if($(this).attr('_Name')=='FRECUENCIA RESPIRATORIA'){
-                                sv_fr=$(this).attr('Value');
+                                //sv_fr=$(this).attr('Value');
                             }
                         });
                     }
