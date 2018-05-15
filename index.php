@@ -10,6 +10,7 @@
     </body>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
     <script src="https://localhost:5001/socket.io/socket.io.js" sighuser="9999" type="text/javascript"></script>
+    <script src="xml2json.js" type="text/javascript"></script>
     <script>
         var xml_file ='<?php echo $_GET['xml'];?>';
         var socket=io.connect('https://localhost:5001/');
@@ -17,7 +18,10 @@
         var sv_dis='';
         var sv_temp='';
         var sv_fc='';
+        var sv_fr='';
         var sv_oximetria='';
+        var sv_glicemia='';
+        var sv_glasgow='';
         var ingreso_id=0;
         var ns=0;
         var serial_numers=[];
@@ -62,6 +66,21 @@
                         }
                     }if($(this).attr('name')=='IdentifierExt'){
                         medico_id=$(this).text();
+                    }if($(this).attr('type')=='widechar' && $(this).attr('name')=='Value' && $(this).text()!=''){
+                        widecharText=$(this).text();
+                        var x2js = new X2JS();
+                        var jsonObj = x2js.xml_str2json( widecharText );
+                        $.each(jsonObj,function(i,e) {
+                            if($(this).attr('_Name')=='ESCALA DE COMA DE GLASGOW'){
+                                sv_glasgow=$(this).attr('Value');
+                            }
+                            if($(this).attr('_Name')=='GLUCEMIA CAPILAR'){
+                                sv_glicemia=$(this).attr('Value');
+                            }
+                            if($(this).attr('_Name')=='FRECUENCIA RESPIRATORIA'){
+                                sv_fr=$(this).attr('Value');
+                            }
+                        });
                     }
                 });
                 if(nombres.length==1){
@@ -72,8 +91,11 @@
                     sv_sis:sv_sis,
                     sv_dia:sv_dia,
                     sv_fc:sv_fc,
+                    sv_fr:sv_fr,
                     sv_temp:(sv_temp!='' ? sv_temp.toFixed(1) :''),
                     sv_oximetria:sv_oximetria.substr(0,4),
+                    sv_glicemia:sv_glicemia,
+                    sv_glasgow:sv_glasgow,
                     equipo_ns:serial_numers[0],
                     xml_file:xml_file,
                     paciente_nombre:nombres[0],
