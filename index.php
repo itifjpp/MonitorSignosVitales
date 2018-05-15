@@ -8,9 +8,6 @@
     <body>
         <div>Iniciando Lectura de Archivos XML..</div>
     </body>
-    <?php
-        define('base_domain', $_SERVER['HTTP_HOST']);
-    ?>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
     <script src="https://localhost:5001/socket.io/socket.io.js" sighuser="9999" type="text/javascript"></script>
     <script>
@@ -21,7 +18,7 @@
         var sv_temp='';
         var sv_fc='';
         var sv_oximetria='';
-        var paciente_id=0;
+        var ingreso_id=0;
         var ns=0;
         var serial_numers=[];
         var nombres=[];
@@ -44,7 +41,7 @@
                         apellidos.push($(this).find('VALUE DEFINITION MEMBERS MEMBER VALUE:first').text());
                     }if($(this).attr('name')=='Identifier'){
                         if($(this).find('VALUE DEFINITION MEMBERS MEMBER VALUE:first').text()!=''){
-                            paciente_id=$(this).find('VALUE DEFINITION MEMBERS MEMBER VALUE:first').text().replace(/\s/g,"");
+                            ingreso_id=$(this).find('VALUE DEFINITION MEMBERS MEMBER VALUE:first').text().replace(/\s/g,"");
                         }
                     }if($(this).attr('name')=='Sat'){
                         if($(this).find('VALUE DEFINITION MEMBERS MEMBER VALUE:first').text()!=''){
@@ -57,7 +54,6 @@
                             sv_temp=$(this).find('VALUE DEFINITION MEMBERS MEMBER VALUE:first').text().replace(/\s/g,"");
                             sv_temp=sv_temp.slice(0,sv_temp.length-2);
                             sv_temp=Number(sv_temp)-273.15;
-
                         }
                     }if($(this).attr('name')=='HR'){
                         if($(this).find('VALUE DEFINITION MEMBERS MEMBER VALUE:first').text()!=''){
@@ -67,7 +63,6 @@
                     }if($(this).attr('name')=='IdentifierExt'){
                         medico_id=$(this).text();
                     }
-
                 });
                 if(nombres.length==1){
                     nombres.push('');
@@ -86,7 +81,7 @@
                     medico_id:medico_id.replace(/\s/g,""),
                     medico_nombre:nombres[1],
                     medico_ap:apellidos[1],
-                    paciente_id:paciente_id
+                    ingreso_id:ingreso_id
                 };
                 socket.emit('MonitorSignosVitalesListening', InformacionSignosVitales); 
                 $.ajax({
