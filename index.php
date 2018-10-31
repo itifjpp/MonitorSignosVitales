@@ -30,14 +30,17 @@
         var medico_id='';
         var sv_dia='';
         $(document).ready(function () {
-            $.get("http://localhost/MonitorSignosVitales/xml/"+xml_file, {}, function (xml){
+            $.get("http://localhost:8085/MonitorSignosVitales/xml/"+xml_file, {}, function (xml){
                 $('MEMBER',xml).each(function(i,e){
                     if($(this).attr('name')=='SerialNumber'){
                         serial_numers.push($(this).find('VALUE').text());
                     }if($(this).attr('name')=='Systolic'){
-                        sv_sis=$(this).find('VALUE DEFINITION MEMBERS MEMBER VALUE:first').text().trim().substr(0,3);
+                        //sv_sis=$(this).find('VALUE DEFINITION MEMBERS MEMBER VALUE:first').text().trim().substr(0,3);
+                        sv_sis=Number($(this).find('VALUE DEFINITION MEMBERS MEMBER VALUE:first').text());
+                        console.log("Sys:"+$(this).find('VALUE DEFINITION MEMBERS MEMBER VALUE:first').text())
                     }if($(this).attr('name')=='Diastolic'){
-                        sv_dia=$(this).find('VALUE DEFINITION MEMBERS MEMBER VALUE:first').text().trim().substr(0,2);
+                        //sv_dia=$(this).find('VALUE DEFINITION MEMBERS MEMBER VALUE:first').text().trim().substr(0,2);
+                        sv_dia=Number($(this).find('VALUE DEFINITION MEMBERS MEMBER VALUE:first').text());
                     }if($(this).attr('name')=='FirstName' ){
                         nombres.push($(this).find('VALUE DEFINITION MEMBERS MEMBER VALUE:first').text())
                     }
@@ -109,9 +112,10 @@
                     medico_ap:apellidos[1],
                     ingreso_id:ingreso_id
                 };
+                console.log(InformacionSignosVitales)
                 socket.emit('MonitorSignosVitalesListening', InformacionSignosVitales); 
                 $.ajax({
-                    url: "https://192.168.0.108/sigh/Sections/SignosVitales/AjaxInformationPatient",
+                    url: "https://192.168.0.111/Sections/SignosVitales/AjaxInformationPatient",
                     type: 'POST',
                     dataType: 'json',
                     data:InformacionSignosVitales,

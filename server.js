@@ -35,19 +35,69 @@ app.use(function(req, res, next) {
     // Pass to next layer of middleware
     next();
 });
+
+
+const Hl7lib = require('nodehl7');
+const config = {
+        "mapping": false,
+        "profiling": true,
+        "debug": true,
+        "fileEncoding": "iso-8859-1"
+};
+let hl7parser = new Hl7lib(config);
+
+let callback = function(err, message){
+    if (err){
+        console.error(err);
+    } else {
+        var pidSegment = message.get('PID');
+	var patientIDs = pidSegment.get('Patient identifier list');
+        
+        console.log("FOLIO SIGH: "+patientIDs);
+        
+        var segment4= message.getSegmentAt(4);/*OXIMETRIA*/
+        var segment4_identifier=segment4.get('Observation Identifier');
+        let segment4_value = segment4.get('Observation Value');
+        console.log("SPO2: "+segment4_value);
+        
+        var segment5= message.getSegmentAt(5);/*FRECIENCIA CARDIACA*/
+        var segment5_identifier=segment5.get('Observation Identifier');
+        let segment5_value = segment5.get('Observation Value');
+        console.log("FC: "+segment5_value);
+        
+        var segment6= message.getSegmentAt(6);/*SISTOLICA*/
+        var segment6_identifier=segment6.get('Observation Identifier');
+        let segment6_value = segment6.get('Observation Value');
+        console.log("SISTOLICA: "+segment6_value);
+        
+        var segment7= message.getSegmentAt(7);/*DIASTOLICA*/
+        var segment7_identifier=segment7.get('Observation Identifier');
+        let segment7_value = segment7.get('Observation Value');
+        console.log("DIASTOLICA: "+segment7_value);
+        
+        var segment8= message.getSegmentAt(8);/*TEMPERATURA*/
+        var segment8_identifier=segment8.get('Observation Identifier');
+        let segment8_value = segment8.get('Observation Value');
+        console.log("TEMPERATURA: "+segment8_value);
+    }
+};
+hl7parser.parseFile('./125986_20181031_144330.txt', callback);
+
 watcher.on('add', function(directory) { 
-    if(path.extname(directory)=='.xml'){
+    if(path.extname(directory)=='.txt'){
+        console.log(directory)
         try {
             var xml1=directory.split("\\");
-            fsCopy.copySync(directory, 'xml/'+xml1[5]);
-            fs.unlink(directory, function(error) {
-                if (!error) {
-                    console.log('Archivo',xml1[5],'agregado. Iniciando lectura del archivo '+ xml1[5]+'...');
-                    open("http://localhost/MonitorSignosVitales?xml="+xml1[5], "Firefox");
-                }else{
-
-                }
-            });
+            //fsCopy.copySync(directory, 'xml/'+xml1[5]);
+            //open("http://localhost:8085/MonitorSignosVitales?xml="+xml1[5], "Firefox");
+//            fs.unlink(directory, function(error) {
+//                if (!error) {
+//                    console.log('Archivo',xml1[5],'agregado. Iniciando lectura del archivo '+ xml1[5]+'...');
+//                    open("http://localhost/MonitorSignosVitales?xml="+xml1[5], "Firefox");
+//                }else{
+//
+//                }
+//            });
         } catch (err) {
             console.error(err);
         }    
