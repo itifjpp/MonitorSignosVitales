@@ -50,13 +50,13 @@ let callback = function(err, message){
     if (err){
         console.error(err);
     } else {
-        var pidSegment = message.get('PID');
-	var patientIDs = pidSegment.get('Patient identifier list');
+        let pidSegment = message.get('PID');
+	let patientIDs = pidSegment.get('Patient identifier list');
         
         console.log("FOLIO SIGH: "+patientIDs);
         
-        var segment4= message.getSegmentAt(4);/*OXIMETRIA*/
-        var segment4_identifier=segment4.get('Observation Identifier');
+        let segment4= message.getSegmentAt(4);/*OXIMETRIA*/
+        let segment4_identifier=segment4.get('Observation Identifier');
         let segment4_value = segment4.get('Observation Value');
         console.log("SPO2: "+segment4_value);
         
@@ -65,27 +65,27 @@ let callback = function(err, message){
         let segment5_value = segment5.get('Observation Value');
         console.log("FC: "+segment5_value);
         
-        var segment6= message.getSegmentAt(6);/*SISTOLICA*/
-        var segment6_identifier=segment6.get('Observation Identifier');
+        let segment6= message.getSegmentAt(6);/*SISTOLICA*/
+        let segment6_identifier=segment6.get('Observation Identifier');
         let segment6_value = segment6.get('Observation Value');
         console.log("SISTOLICA: "+segment6_value);
         
-        var segment7= message.getSegmentAt(7);/*DIASTOLICA*/
-        var segment7_identifier=segment7.get('Observation Identifier');
+        let segment7= message.getSegmentAt(7);/*DIASTOLICA*/
+        let segment7_identifier=segment7.get('Observation Identifier');
         let segment7_value = segment7.get('Observation Value');
         console.log("DIASTOLICA: "+segment7_value);
         
         var segment8= message.getSegmentAt(8);/*TEMPERATURA*/
         var segment8_identifier=segment8.get('Observation Identifier');
         let segment8_value = segment8.get('Observation Value');
-        console.log("TEMPERATURA: "+segment8_value);
+        console.log("TEMPERATURA: "+segment8_value+"\n");
     }
 };
-hl7parser.parseFile('./125986_20181031_144330.txt', callback);
+
 
 watcher.on('add', function(directory) { 
     if(path.extname(directory)=='.txt'){
-        console.log(directory)
+        hl7parser.parseFile(directory, callback);
         try {
             var xml1=directory.split("\\");
             //fsCopy.copySync(directory, 'xml/'+xml1[5]);
