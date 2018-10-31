@@ -15,7 +15,7 @@ var path    = require("path");
 var chokidar = require('chokidar');
 var open = require('open');
 var fsCopy = require('fs-extra');
-var watcher = chokidar.watch('C://Program Files (x86)//Welch Allyn//NCE//SavedCopies//', {
+var watcher = chokidar.watch('C://Schiller//SchillerServer//_Data//Schiller//HL7//', {
     ignored: /^\./, 
     persistent: true
 });
@@ -51,34 +51,44 @@ let callback = function(err, message){
         console.error(err);
     } else {
         let pidSegment = message.get('PID');
-	let patientIDs = pidSegment.get('Patient identifier list');
+		if(pidSegment!=null){
+			let patientIDs = pidSegment.get('Patient identifier list');
+			console.log("FOLIO SIGH: "+patientIDs);
+		}
+		try{
+			let segment4= message.get("OBX","SPO2");/*OXIMETRIA*/
+			let segment4_identifier=segment4.get('Observation Identifier');
+		
+			let segment4_value = segment4.get('Observation Value');
+			console.log("SPO2: "+segment4_value);
+		}catch(error){}
         
-        console.log("FOLIO SIGH: "+patientIDs);
+        try{
+			var segment5= message.getSegmentAt(5);/*FRECIENCIA CARDIACA*/
+			var segment5_identifier=segment5.get('Observation Identifier');
+			let segment5_value = segment5.get('Observation Value');
+			console.log("FC: "+segment5_value);
+		}catch(error){}
         
-        let segment4= message.getSegmentAt(4);/*OXIMETRIA*/
-        let segment4_identifier=segment4.get('Observation Identifier');
-        let segment4_value = segment4.get('Observation Value');
-        console.log("SPO2: "+segment4_value);
-        
-        var segment5= message.getSegmentAt(5);/*FRECIENCIA CARDIACA*/
-        var segment5_identifier=segment5.get('Observation Identifier');
-        let segment5_value = segment5.get('Observation Value');
-        console.log("FC: "+segment5_value);
-        
-        let segment6= message.getSegmentAt(6);/*SISTOLICA*/
-        let segment6_identifier=segment6.get('Observation Identifier');
-        let segment6_value = segment6.get('Observation Value');
-        console.log("SISTOLICA: "+segment6_value);
-        
-        let segment7= message.getSegmentAt(7);/*DIASTOLICA*/
-        let segment7_identifier=segment7.get('Observation Identifier');
-        let segment7_value = segment7.get('Observation Value');
-        console.log("DIASTOLICA: "+segment7_value);
-        
-        var segment8= message.getSegmentAt(8);/*TEMPERATURA*/
-        var segment8_identifier=segment8.get('Observation Identifier');
-        let segment8_value = segment8.get('Observation Value');
-        console.log("TEMPERATURA: "+segment8_value+"\n");
+		try{
+			let segment6= message.getSegmentAt(6);/*SISTOLICA*/
+			let segment6_identifier=segment6.get('Observation Identifier');
+			let segment6_value = segment6.get('Observation Value');
+			console.log("SISTOLICA: "+segment6_value);
+		}catch(error){}
+		try{
+			let segment7= message.getSegmentAt(7);/*DIASTOLICA*/
+			let segment7_identifier=segment7.get('Observation Identifier');
+			let segment7_value = segment7.get('Observation Value');
+			console.log("DIASTOLICA: "+segment7_value);
+		}catch(error){}
+		
+        try{
+			var segment8= message.getSegmentAt(8);/*TEMPERATURA*/
+			var segment8_identifier=segment8.get('Observation Identifier');
+			let segment8_value = segment8.get('Observation Value');
+			console.log("TEMPERATURA: "+segment8_value+"\n");
+		}catch(error){} 
     }
 };
 
